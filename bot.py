@@ -65,7 +65,7 @@ def run_long_polling(chat_id, bot, devman_token, logger):
                     message += f'К сожалению, в работе [нашлись ошибки]({attempt["lesson_url"]})'
                     logger.info(f'Работа «{attempt["lesson_title"]}» проверена, есть ошибки')
                 else:
-                    message += 'Преподавателю всё понравилось, можно приступать к следующему уроку!'
+                    message += 'Преподавателю всё понравилось, можно приступать к следующему уроку\!'
                     logger.info(f'Работа «{attempt["lesson_title"]}» проверена, ошибок нет')
                 bot.send_message(
                     chat_id=chat_id,
