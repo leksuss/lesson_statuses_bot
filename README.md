@@ -7,6 +7,7 @@ This bot is for notify Devman students about his lessons status.
  - python3.6+
  - `python-telegram-bot`
  - `environs`
+ - `requests`
 
 
 ## How to setup
