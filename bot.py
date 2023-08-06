@@ -30,15 +30,7 @@ def read_args():
     return args
 
 
-def send_message(bot, chat_id, text):
-    bot.send_message(
-        chat_id=chat_id,
-        text=text,
-        parse_mode='MarkdownV2',
-    )
-
-
-def run_long_polling(chat_id, bot, devman_token, url, retry_timeout, logger):
+def run_long_polling(chat_id, bot, devman_token, logger):
     timestamp = time.time()
     headers = {
         'Authorization': f"Token {devman_token}",
@@ -49,7 +41,7 @@ def run_long_polling(chat_id, bot, devman_token, url, retry_timeout, logger):
         }
         try:
             response = requests.get(
-                url,
+                LONG_POLLING_URL,
                 headers=headers,
                 params=params,
             )
@@ -57,17 +49,17 @@ def run_long_polling(chat_id, bot, devman_token, url, retry_timeout, logger):
             continue
         except requests.exceptions.ConnectionError:
             logger.warning(
-                f'Проблемы с сетью, пробуем через {retry_timeout} секунд'
+                f'Проблемы с сетью, пробуем через {RETRY_TIMEOUT} секунд'
             )
-            time.sleep(retry_timeout)
+            time.sleep(RETRY_TIMEOUT)
             continue
 
         response.raise_for_status()
 
-        response = response.json()
-        if response['status'] == 'found':
-            timestamp = response['last_attempt_timestamp']
-            for attempt in response['new_attempts']:
+        user_reviews = response.json()
+        if user_reviews['status'] == 'found':
+            timestamp = user_reviews['last_attempt_timestamp']
+            for attempt in user_reviews['new_attempts']:
                 message = f'У вас проверили работу «{attempt["lesson_title"]}»\n\n'
                 if attempt['is_negative']:
                     message += f'К сожалению, в работе [нашлись ошибки]({attempt["lesson_url"]})'
@@ -75,7 +67,11 @@ def run_long_polling(chat_id, bot, devman_token, url, retry_timeout, logger):
                 else:
                     message += 'Преподавателю всё понравилось, можно приступать к следующему уроку!'
                     logger.info(f'Работа «{attempt["lesson_title"]}» проверена, ошибок нет')
-                send_message(bot, chat_id, message)
+                    bot.send_message(
+                        chat_id=chat_id,
+                        text=message,
+                        parse_mode='MarkdownV2',
+                    )
 
 
 def main():
@@ -99,8 +95,6 @@ def main():
         args.chat_id,
         bot,
         devman_token,
-        LONG_POLLING_URL,
-        RETRY_TIMEOUT,
         logger,
     )
 
