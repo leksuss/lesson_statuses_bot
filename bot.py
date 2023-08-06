@@ -67,11 +67,11 @@ def run_long_polling(chat_id, bot, devman_token, logger):
                 else:
                     message += 'Преподавателю всё понравилось, можно приступать к следующему уроку!'
                     logger.info(f'Работа «{attempt["lesson_title"]}» проверена, ошибок нет')
-                    bot.send_message(
-                        chat_id=chat_id,
-                        text=message,
-                        parse_mode='MarkdownV2',
-                    )
+                bot.send_message(
+                    chat_id=chat_id,
+                    text=message,
+                    parse_mode='MarkdownV2',
+                )
 
 
 def main():
