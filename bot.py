@@ -81,10 +81,8 @@ def run_long_polling(chat_id, bot, devman_token, logger):
                 message = f'У вас проверили работу «{attempt["lesson_title"]}»\n\n'
                 if attempt['is_negative']:
                     message += f'К сожалению, в работе [нашлись ошибки]({attempt["lesson_url"]})'
-                    logger.info(f'Работа «{attempt["lesson_title"]}» проверена, есть ошибки')
                 else:
                     message += 'Преподавателю всё понравилось, можно приступать к следующему уроку\!'
-                    logger.info(f'Работа «{attempt["lesson_title"]}» проверена, ошибок нет')
                 bot.send_message(
                     chat_id=chat_id,
                     text=message,
@@ -102,7 +100,7 @@ def main():
     args = read_args()
 
     handler = TelegramLogsHandler(bot, args.chat_id)
-    handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+    handler.setFormatter(logging.Formatter('%(message)s'))
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
 
