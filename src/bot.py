@@ -78,7 +78,8 @@ def run_long_polling(chat_id, bot, devman_token, logger):
         if user_reviews['status'] == 'found':
             timestamp = user_reviews['last_attempt_timestamp']
             for attempt in user_reviews['new_attempts']:
-                message = f'У вас проверили работу «{attempt["lesson_title"]}»\n\n'
+
+                message = 'У вас проверили работу «{}»\n\n'.format(attempt["lesson_title"].replace("-", "\-"))
                 if attempt['is_negative']:
                     message += f'К сожалению, в работе [нашлись ошибки]({attempt["lesson_url"]})'
                 else:
